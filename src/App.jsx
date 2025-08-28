@@ -92,11 +92,60 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
     );
 };
 
+// --- Login Page Component ---
+const LoginPage = ({ onLogin }) => {
+    const [isSigningUp, setIsSigningUp] = useState(false);
+
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center p-4" style={{backgroundImage: "url('https://placehold.co/1920x1080/002040/FFFFFF?text=Weather+Background')"}}>
+            <GlassPanel className="w-full max-w-md p-8 text-white animate-fade-in">
+                <div className="text-center mb-8">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                        <Droplets size={32} className="text-blue-300" />
+                        <h1 className="text-3xl font-bold tracking-wider">Droplet</h1>
+                    </div>
+                    <p className="text-white/70">{isSigningUp ? 'Create an account to get started' : 'Welcome back! Please sign in.'}</p>
+                </div>
+
+                <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onLogin(); }}>
+                    {isSigningUp && (
+                        <div>
+                            <label className="block text-sm font-medium text-white/80 mb-1">Name</label>
+                            <input type="text" required className="w-full bg-white/10 backdrop-blur-lg rounded-full py-2 px-4 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50" />
+                        </div>
+                    )}
+                    <div>
+                        <label className="block text-sm font-medium text-white/80 mb-1">Email</label>
+                        <input type="email" required className="w-full bg-white/10 backdrop-blur-lg rounded-full py-2 px-4 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-white/80 mb-1">Password</label>
+                        <input type="password" required className="w-full bg-white/10 backdrop-blur-lg rounded-full py-2 px-4 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50" />
+                    </div>
+                    <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-full transition-colors">
+                        {isSigningUp ? 'Sign Up' : 'Sign In'}
+                    </button>
+                </form>
+
+                <div className="text-center mt-6">
+                    <p className="text-sm text-white/70">
+                        {isSigningUp ? 'Already have an account?' : "Don't have an account?"}
+                        <button onClick={() => setIsSigningUp(!isSigningUp)} className="font-semibold text-blue-300 hover:text-blue-400 ml-2">
+                            {isSigningUp ? 'Sign In' : 'Sign Up'}
+                        </button>
+                    </p>
+                </div>
+            </GlassPanel>
+        </div>
+    );
+};
+
 
 // --- Main App Component ---
 export default function App() {
     const [forecastDays, setForecastDays] = useState(7);
     const [showSettings, setShowSettings] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Manages login state
     const [settings, setSettings] = useState({
         tempUnit: 'C',
         windUnit: 'kmh',
@@ -104,6 +153,16 @@ export default function App() {
         defaultLocation: 'Hyderabad',
         language: 'en'
     });
+    // A simple function to simulate logging in
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+    };
+    
+    // A simple function to simulate logging out
+        
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+    };
     
     // Apply theme to the body
     useEffect(() => {
@@ -129,6 +188,9 @@ export default function App() {
             return (kmh / 1.609).toFixed(1);
         }
         return kmh;
+    }
+    if (!isLoggedIn) {
+        return <LoginPage onLogin={handleLogin} />;
     }
 
     return (
@@ -164,7 +226,9 @@ export default function App() {
                         </div>
                         <div className="flex items-center space-x-6">
                             <Bell size={24} className="cursor-pointer" />
-                            <img src="https://placehold.co/40x40/FFFFFF/000000?text=U" alt="User" className="rounded-full w-10 h-10 border-2 border-gray-500/50 dark:border-white/50" />
+                            <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-4 rounded-full transition-colors">
+                                Sign Out
+                            </button>
                         </div>
                     </header>
 
