@@ -244,11 +244,47 @@ const LoginPage = ({ onLogin }) => {
     </div>
   );
 };
+// --- User Profile Page Component ---
+const UserProfilePage = ({ closePanel, onLogout }) => {
+    // Mock user data for display
+    const user = {
+        name: "Hsu",
+        email: "hsu@example.com",
+        joinDate: "August 2025",
+        avatar: "https://placehold.co/100x100/FFFFFF/000000?text=U"
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-center p-4 transition-opacity duration-300">
+            <GlassPanel className="w-full max-w-md p-8 text-gray-800 dark:text-white relative animate-fade-in">
+                <button
+                    onClick={closePanel}
+                    className="absolute top-4 right-4 text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white"
+                >
+                    <X size={24} />
+                </button>
+                <div className="flex flex-col items-center">
+                    <img src={user.avatar} alt="User Avatar" className="w-24 h-24 rounded-full border-4 border-gray-500/50 dark:border-white/50 mb-4" />
+                    <h2 className="text-3xl font-bold">{user.name}</h2>
+                    <p className="text-gray-600 dark:text-white/70">{user.email}</p>
+                    <p className="text-sm text-gray-500 dark:text-white/50 mt-2">Member since {user.joinDate}</p>
+                    <button
+                        onClick={onLogout}
+                        className="mt-8 w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-full transition-colors"
+                    >
+                        Sign Out
+                    </button>
+                </div>
+            </GlassPanel>
+        </div>
+    );
+};
 
 // --- Main App Component ---
 export default function App() {
   const [forecastDays, setForecastDays] = useState(7);
   const [showSettings, setShowSettings] = useState(false);
+  const [showProfile, setShowProfile] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Manages login state
   const [settings, setSettings] = useState({
     tempUnit: "C",
@@ -472,6 +508,13 @@ export default function App() {
           closePanel={() => setShowSettings(false)}
         />
       )}
+      {showProfile && (
+        <UserProfilePage
+          closePanel={() => setShowProfile(false)}
+          onLogout={handleLogout}
+        />
+      )}
+
 
       {/* Floating Clouds */}
       <Cloud
@@ -526,17 +569,13 @@ export default function App() {
                 size={24}
                 className="cursor-pointer text-gray-700 dark:text-white/70 hover:text-gray-900 dark:hover:text-white transition-colors"
               />
-              <img
+              <button onClick={() => setShowProfile(true)} className="focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full">
+                <img
                 src="https://placehold.co/40x40/FFFFFF/000000?text=U"
                 alt="User"
                 className="rounded-full w-10 h-10 border-2 border-gray-500/50 dark:border-white/50"
-              />
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-4 rounded-full transition-colors"
-              >
-                Sign Out
-              </button>
+                />
+                </button>
             </div>
           </header>
 
