@@ -17,23 +17,25 @@ import {
   X,
   SunDim,
   Moon,
+  CloudLightning,
+  CloudSnow,
 } from "lucide-react";
 import axios from "axios";
 
-// --- Weather Condition to GIF Mapping ---
+// --- Weather Condition to Lucide Icon Mapping ---
 const weatherGifs = {
-  1000: "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif", // Sunny
-  1003: "https://media.giphy.com/media/xT9IgzoYQ6Y8Z7Z7Z4/giphy.gif", // Partly cloudy
-  1006: "https://media.giphy.com/media/xT9IgzoYQ6Y8Z7Z7Z4/giphy.gif", // Cloudy
-  1009: "https://media.giphy.com/media/xT9IgzoYQ6Y8Z7Z7Z4/giphy.gif", // Overcast
-  1063: "https://media.giphy.com/media/l0Iyl55kTeh71nTWw/giphy.gif", // Patchy rain possible
-  1183: "https://media.giphy.com/media/xT9IgG50fb1L2/giphy.gif", // Light rain
-  1189: "https://giffiles.alphacoders.com/131/13147.gif", // Moderate rain
-  1195: "https://giffiles.alphacoders.com/131/13147.gif", // Heavy rain
-  1213: "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif", // Light snow
-  1240: "https://media.giphy.com/media/l0Iyl55kTeh71nTWw/giphy.gif", // Light rain shower
-  1273: "https://media.giphy.com/media/xT9IgH2xD9q2Y/giphy.gif", // Thunderstorm
-  Default: "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif", // Fallback
+  1000: <Sun size={24} className="text-yellow-400" />, // Sunny
+  1003: <CloudSun size={24} className="text-gray-400" />, // Partly cloudy
+  1006: <Cloudy size={24} className="text-gray-500" />, // Cloudy
+  1009: <Cloudy size={24} className="text-gray-600" />, // Overcast
+  1063: <CloudRain size={24} className="text-blue-300" />, // Patchy rain possible
+  1183: <CloudRain size={24} className="text-blue-400" />, // Light rain
+  1189: <CloudRain size={24} className="text-blue-500" />, // Moderate rain
+  1195: <CloudRain size={24} className="text-blue-600" />, // Heavy rain
+  1213: <CloudSnow size={24} className="text-blue-200" />, // Light snow
+  1240: <CloudRain size={24} className="text-blue-300" />, // Light rain shower
+  1273: <CloudLightning size={24} className="text-purple-400" />, // Thunderstorm
+  Default: <Cloud size={24} className="text-gray-400" />, // Fallback
 };
 
 // --- Reusable Glass Panel Component ---
@@ -244,6 +246,7 @@ const LoginPage = ({ onLogin }) => {
     </div>
   );
 };
+
 // --- User Profile Page Component ---
 const UserProfilePage = ({ closePanel, onLogout }) => {
     // Mock user data for display
@@ -284,7 +287,7 @@ const UserProfilePage = ({ closePanel, onLogout }) => {
 export default function App() {
   const [forecastDays, setForecastDays] = useState(7);
   const [showSettings, setShowSettings] = useState(false);
-  const [showProfile, setShowProfile] = useState(false); 
+  const [showProfile, setShowProfile] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Manages login state
   const [settings, setSettings] = useState({
     tempUnit: "C",
@@ -336,15 +339,7 @@ export default function App() {
           time: data.location.localtime.split(" ")[1],
           temp: Math.round(data.current.temp_c),
           condition: data.current.condition.text,
-          icon: (
-            <img
-              src={
-                weatherGifs[data.current.condition.code] || weatherGifs.Default
-              }
-              alt={data.current.condition.text}
-              className="w-16 h-16 drop-shadow-lg"
-            />
-          ),
+          icon: weatherGifs[data.current.condition.code] || weatherGifs.Default,
           details: {
             pressure: data.current.pressure_mb,
             humidity: `${data.current.humidity}%`,
@@ -365,13 +360,7 @@ export default function App() {
               month: "short",
             }),
             temp: `${Math.round(day.day.maxtemp_c)}°/${Math.round(day.day.mintemp_c)}°`,
-            icon: (
-              <img
-                src={weatherGifs[day.day.condition.code] || weatherGifs.Default}
-                alt={day.day.condition.text}
-                className="w-6 h-6"
-              />
-            ),
+            icon: weatherGifs[day.day.condition.code] || weatherGifs.Default,
           }));
 
         // Summary (hourly)
@@ -381,13 +370,7 @@ export default function App() {
             time: hour.time.split(" ")[1],
             temp: Math.round(hour.temp_c),
             rain: hour.chance_of_rain,
-            icon: (
-              <img
-                src={weatherGifs[hour.condition.code] || weatherGifs.Default}
-                alt={hour.condition.text}
-                className="w-5 h-5"
-              />
-            ),
+            icon: weatherGifs[hour.condition.code] || weatherGifs.Default,
           }));
 
         // Popular cities
@@ -400,16 +383,7 @@ export default function App() {
             return {
               name: res.data.location.name,
               condition: res.data.current.condition.text,
-              icon: (
-                <img
-                  src={
-                    weatherGifs[res.data.current.condition.code] ||
-                    weatherGifs.Default
-                  }
-                  alt={res.data.current.condition.text}
-                  className="w-5 h-5"
-                />
-              ),
+              icon: weatherGifs[res.data.current.condition.code] || weatherGifs.Default,
             };
           }),
         );
@@ -465,13 +439,7 @@ export default function App() {
       time: "N/A",
       temp: 0,
       condition: "N/A",
-      icon: (
-        <img
-          src={weatherGifs.Default}
-          alt="Loading"
-          className="w-16 h-16 drop-shadow-lg"
-        />
-      ),
+      icon: weatherGifs.Default,
       details: { pressure: 0, humidity: "0%", wind: 0, uv: 0 },
     },
     forecast: [],
@@ -514,7 +482,6 @@ export default function App() {
           onLogout={handleLogout}
         />
       )}
-
 
       {/* Floating Clouds */}
       <Cloud
